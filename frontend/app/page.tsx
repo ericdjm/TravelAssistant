@@ -152,7 +152,7 @@ export default function HomePage() {
           </>
         )}
 
-        {showSuggestions && (
+        {showSuggestions && searchResults?.suggestions && (
           <>
             <ResultsTitle>You might also like these destinations:</ResultsTitle>
             {searchResults.suggestions.map((suggestion) => (

@@ -1,8 +1,8 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+// import { Inter } from 'next/font/google'  // Removed due to sandbox network restrictions
 import StyledComponentsRegistry from './registry'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })  // Removed due to sandbox network restrictions
 
 export const metadata = {
   title: 'Travel Assistant',
@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <StyledComponentsRegistry>
           {children}
         </StyledComponentsRegistry>
