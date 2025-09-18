@@ -1,0 +1,77 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15
+    container_name: travel_assistant_db
+    environment:
+      POSTGRES_USER: travel_user
+      POSTGRES_PASSWORD: travel_pass
+      POSTGRES_DB: travel_assistant
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - travel_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U travel_user -d travel_assistant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: travel_assistant_backend
+    environment:
+      - DATABASE_URL=postgresql://travel_user:travel_pass@db:5432/travel_assistant
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - DEBUG=true
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - travel_network
+    volumes:
+      - ./backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: travel_assistant_frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - travel_network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+networks:
+  travel_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

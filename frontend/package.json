@@ -1,0 +1,31 @@
+{
+  "name": "travel-assistant-frontend",
+  "version": "1.0.0",
+  "description": "Travel Assistant Frontend with Next.js and TypeScript",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.0",
+    "styled-components": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/styled-components": "^5.1.0",
+    "eslint": "^8.53.0",
+    "eslint-config-next": "^14.0.0",
+    "typescript": "^5.2.0"
+  },
+  "keywords": ["travel", "assistant", "nextjs", "typescript"],
+  "author": "Travel Assistant Team",
+  "license": "MIT"
+}
