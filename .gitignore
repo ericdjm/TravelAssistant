@@ -1,6 +1,8 @@
 # Compiled class files
 *.class
 
+nextsteps.txt
+
 # Package files
 *.jar
 *.war
