@@ -1,2 +1,0 @@
-# TravelAssistant
-AI travel assistant
