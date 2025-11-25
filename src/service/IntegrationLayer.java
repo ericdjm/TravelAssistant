@@ -13,23 +13,35 @@ public class IntegrationLayer {
     private IWeatherService weatherService;
 
     public List<POI> getNearbyPlaces(LatLng coords, Preferences prefs) {
-        // TODO: delegate to placesService
-        return null;
+        if (placesService == null) {
+            System.err.println("⚠️ PlacesService not initialized");
+            return new java.util.ArrayList<>();
+        }
+        return placesService.searchPlaces(coords, prefs);
     }
 
     public List<ETA> getETAs(RouteRequest req) {
-        // TODO: delegate to transitService
-        return null;
+        if (transitService == null) {
+            System.err.println("⚠️ TransitService not initialized");
+            return new java.util.ArrayList<>();
+        }
+        return transitService.getTransitETAs(req);
     }
 
     public LatLng geocode(String address) {
-        // TODO: delegate to placesService
-        return null;
+        if (placesService == null) {
+            System.err.println("⚠️ PlacesService not initialized");
+            return null;
+        }
+        return placesService.geocode(address);
     }
 
     public Weather getWeather(LatLng loc) {
-        // TODO: delegate to weatherService
-        return null;
+        if (weatherService == null) {
+            System.err.println("⚠️ WeatherService not initialized");
+            return null;
+        }
+        return weatherService.getWeather(loc);
     }
 
     // Wiring helpers (optional)

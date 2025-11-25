@@ -5,6 +5,7 @@ nextsteps.txt
 
 # Package files
 *.jar
+!lib/*.jar  # Keep JDBC driver JARs in lib folder
 *.war
 *.ear
 

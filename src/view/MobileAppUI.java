@@ -1,37 +1,117 @@
 package view;
 
 import model.*;
+import controller.*;
 import domain.*;
-import java.util.List;
+import javax.swing.*;
+import java.awt.*;
 
 /**
- * «view» Mobile UI layer.
+ * Main UI for Travel Assistant.
+ * Uses CardLayout to switch between MainMenu and Planning screens.
+ *
+ * @author CPS731 Team 20
  */
-public class MobileAppUI {
+public class MobileAppUI extends JFrame {
 
-    private String currentSessionId;
-    private String currentLocation;
-    private List<RecommendationCard> displayedCards;
+    private ConversationEngine conversationEngine;
 
-    public Preferences capturePreferences() {
-        // TODO: capture user preferences from UI
-        return null;
+    // Panels
+    private MainMenuPanel mainMenuPanel;
+    private PlanningPanel planningPanel;
+
+    // CardLayout for switching
+    private CardLayout cardLayout;
+    private JPanel cardsPanel;
+
+    public MobileAppUI() {
+        initUI();
     }
 
-    public void requestLocation() {
-        // TODO: trigger GPS or manual location flow
+    /**
+     * Initialize the Swing UI.
+     */
+    private void initUI() {
+        setTitle("CPS731 Travel Assistant - Phase 3");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1000, 750);
+        setLocationRelativeTo(null);
+
+        // Main container with BorderLayout
+        JPanel mainContainer = new JPanel(new BorderLayout());
+
+        // Header panel
+        JPanel headerPanel = createHeaderPanel();
+        mainContainer.add(headerPanel, BorderLayout.NORTH);
+
+        // Cards panel with CardLayout
+        cardLayout = new CardLayout();
+        cardsPanel = new JPanel(cardLayout);
+
+        // Note: Panels will be added in setConversationEngine()
+        // because they need the conversation engine
+
+        mainContainer.add(cardsPanel, BorderLayout.CENTER);
+
+        add(mainContainer);
     }
 
-    public void renderCards(List<RecommendationCard> cards) {
-        this.displayedCards = cards;
-        // TODO: render list of cards on screen
+    /**
+     * Create header panel with title.
+     */
+    private JPanel createHeaderPanel() {
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(25, 118, 210)); // Blue
+        panel.setPreferredSize(new Dimension(0, 60));
+
+        JLabel titleLabel = new JLabel("🗺️ Travel Assistant");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(Color.WHITE);
+        panel.add(titleLabel);
+
+        return panel;
     }
 
-    public void showSteps(Itinerary itinerary) {
-        // TODO: display itinerary steps to the user
+    /**
+     * Set conversation engine and initialize panels.
+     */
+    public void setConversationEngine(ConversationEngine engine) {
+        this.conversationEngine = engine;
+
+        // Create panels
+        mainMenuPanel = new MainMenuPanel(this, conversationEngine);
+        planningPanel = new PlanningPanel(this, conversationEngine);
+
+        // Add panels to card layout
+        cardsPanel.add(mainMenuPanel, "MAIN_MENU");
+        cardsPanel.add(planningPanel, "PLANNING");
+
+        // Show main menu by default
+        cardLayout.show(cardsPanel, "MAIN_MENU");
     }
 
-    public void showMessage(String msg) {
-        // TODO: show generic message (errors, rate limit, etc.)
+    /**
+     * Switch to planning panel with saved preferences.
+     */
+    public void switchToPlanningPanel(Preferences prefs) {
+        planningPanel.setPreferences(prefs);
+        cardLayout.show(cardsPanel, "PLANNING");
+    }
+
+    /**
+     * Switch back to main menu.
+     */
+    public void switchToMainMenu() {
+        cardLayout.show(cardsPanel, "MAIN_MENU");
+    }
+
+    /**
+     * Main method to launch UI (for testing).
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MobileAppUI ui = new MobileAppUI();
+            ui.setVisible(true);
+        });
     }
 }

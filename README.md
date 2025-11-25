@@ -78,6 +78,18 @@ cd src && javac domain/*.java service/*.java model/*.java controller/*.java view
 
 ---
 
+# Download MYSQL
+
+Step-by-Step Download Instructions
+
+  official MySQL Website
+
+  1. Go to: https://dev.mysql.com/downloads/connector/j/
+  2. Select Platform: "Platform Independent"
+  3. Click Download for the ZIP Archive
+  4. Click "No thanks, just start my download"
+  5. Extract the ZIP → you'll get mysql-connector-j-9.5.0.jar
+
 ## Current Status (Lab-7 - Nov 3)
 
 ✅ **Completed:**
