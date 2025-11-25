@@ -102,7 +102,7 @@ public class SignInPanel extends JPanel {
         signInButton.setPreferredSize(new Dimension(150, 40));
         signInButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         signInButton.setBackground(new Color(25, 118, 210));
-        signInButton.setForeground(Color.WHITE);
+        signInButton.setForeground(Color.BLACK);
         signInButton.setFont(new Font("Arial", Font.BOLD, 14));
         signInButton.addActionListener(e -> handleSignIn());
         panel.add(signInButton);
@@ -199,7 +199,7 @@ public class SignInPanel extends JPanel {
         JButton signUpButton = new JButton("Sign Up");
         signUpButton.setPreferredSize(new Dimension(150, 40));
         signUpButton.setBackground(new Color(76, 175, 80));
-        signUpButton.setForeground(Color.WHITE);
+        signUpButton.setForeground(Color.BLACK);
         signUpButton.setFont(new Font("Arial", Font.BOLD, 14));
         signUpButton.addActionListener(e -> handleSignUp());
         panel.add(signUpButton, gbc);
@@ -330,6 +330,9 @@ public class SignInPanel extends JPanel {
      */
     private void continueAsGuest() {
         System.out.println("[SignIn] Continuing as guest");
+
+        // Start guest session (null userId)
+        conversationEngine.startSession(null);
 
         // Create default preferences
         Preferences prefs = new Preferences();

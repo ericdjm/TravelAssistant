@@ -4,7 +4,9 @@ import model.*;
 import service.*;
 import domain.*;
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * «controller» central application controller.
@@ -25,6 +27,8 @@ public class ConversationEngine {
     private String promptState;
     private Preferences currentPreferences;
     private List<RecommendationCard> currentRecommendations;
+    private Session currentSession;
+    private UserID currentUserId;
 
     // Dependencies from the class diagram
     private RecommendationEngine recommendationEngine;
@@ -97,6 +101,9 @@ public class ConversationEngine {
 
         // Step 3: Update prompt state
         promptState = "showing_recommendations";
+
+        // Step 4: Increment session request count
+        incrementSessionRequests();
 
         System.out.println("\n✅ Planning session started!");
         System.out.println("  Found " + currentRecommendations.size() + " recommendations");
@@ -255,6 +262,10 @@ public class ConversationEngine {
         return recommendationEngine;
     }
 
+    public ProfileContextStore getProfileContextStore() {
+        return profileContextStore;
+    }
+
     // Optional wiring methods (not in diagram but useful)
     public void setRecommendationEngine(RecommendationEngine recommendationEngine) {
         this.recommendationEngine = recommendationEngine;
@@ -270,5 +281,70 @@ public class ConversationEngine {
 
     public void setAnalyticsLogger(AnalyticsLogger analyticsLogger) {
         this.analyticsLogger = analyticsLogger;
+    }
+
+    // ========================================================================
+    // Session Management
+    // ========================================================================
+
+    /**
+     * Start a new session for a user.
+     * Creates a new Session object and saves it to database.
+     *
+     * @param userId User ID (can be null for guest)
+     */
+    public void startSession(UserID userId) {
+        this.currentUserId = userId;
+
+        // Create new session
+        currentSession = new Session();
+        currentSession.setSessionId(new SessionID("session_" + UUID.randomUUID().toString()));
+        currentSession.setUserId(userId); // Can be null for guests
+        currentSession.setCreatedAt(Instant.now());
+
+        System.out.println("[ConversationEngine] New session started: " + currentSession.getSessionId().getValue());
+        if (userId != null) {
+            System.out.println("  User: " + userId.getValue());
+        } else {
+            System.out.println("  User: Guest");
+        }
+    }
+
+    /**
+     * Increment request count for current session.
+     * Call this each time user makes a request (startPlanning, adjustPreferences, etc.)
+     */
+    public void incrementSessionRequests() {
+        if (currentSession != null) {
+            currentSession.incrementRequestCount();
+        }
+    }
+
+    /**
+     * Save current session to database.
+     * Call this when user is done with planning or navigates away.
+     */
+    public void saveCurrentSession() {
+        if (currentSession == null) {
+            System.err.println("⚠️ No active session to save");
+            return;
+        }
+
+        if (profileContextStore == null) {
+            System.err.println("⚠️ ProfileContextStore not initialized");
+            return;
+        }
+
+        profileContextStore.saveSession(currentSession);
+        System.out.println("✓ Session saved: " + currentSession.getSessionId().getValue() +
+                         " (" + currentSession.getRequestCount() + " requests)");
+    }
+
+    public Session getCurrentSession() {
+        return currentSession;
+    }
+
+    public UserID getCurrentUserId() {
+        return currentUserId;
     }
 }

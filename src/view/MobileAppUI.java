@@ -17,8 +17,10 @@ public class MobileAppUI extends JFrame {
     private ConversationEngine conversationEngine;
 
     // Panels
+    private SignInPanel signInPanel;
     private MainMenuPanel mainMenuPanel;
     private PlanningPanel planningPanel;
+    private SettingsPanel settingsPanel;
 
     // CardLayout for switching
     private CardLayout cardLayout;
@@ -79,19 +81,24 @@ public class MobileAppUI extends JFrame {
         this.conversationEngine = engine;
 
         // Create panels
+        signInPanel = new SignInPanel(this, conversationEngine);
         mainMenuPanel = new MainMenuPanel(this, conversationEngine);
         planningPanel = new PlanningPanel(this, conversationEngine);
+        settingsPanel = new SettingsPanel(this, conversationEngine);
 
         // Add panels to card layout
+        cardsPanel.add(signInPanel, "SIGN_IN");
         cardsPanel.add(mainMenuPanel, "MAIN_MENU");
         cardsPanel.add(planningPanel, "PLANNING");
+        cardsPanel.add(settingsPanel, "SETTINGS");
 
-        // Show main menu by default
-        cardLayout.show(cardsPanel, "MAIN_MENU");
+        // Show sign in panel by default
+        cardLayout.show(cardsPanel, "SIGN_IN");
     }
 
     /**
      * Switch to planning panel with saved preferences.
+     * Note: Session should already be started by caller (MainMenuPanel or SignInPanel).
      */
     public void switchToPlanningPanel(Preferences prefs) {
         planningPanel.setPreferences(prefs);
@@ -99,9 +106,59 @@ public class MobileAppUI extends JFrame {
     }
 
     /**
+     * Switch to main menu with loaded profile.
+     * Starts a new session for this user.
+     */
+    public void switchToMainMenuWithProfile(Profile profile) {
+        if (profile != null && profile.getUserId() != null) {
+            // Start session for authenticated user
+            conversationEngine.startSession(profile.getUserId());
+        }
+
+        // Pass profile to main menu
+        mainMenuPanel.loadProfileDirectly(profile);
+
+        cardLayout.show(cardsPanel, "MAIN_MENU");
+    }
+
+    /**
      * Switch back to main menu.
+     * Saves current session if active.
      */
     public void switchToMainMenu() {
+        // Save session when going back
+        conversationEngine.saveCurrentSession();
+
+        cardLayout.show(cardsPanel, "MAIN_MENU");
+    }
+
+    /**
+     * Switch to sign in screen (for sign out).
+     */
+    public void switchToSignIn() {
+        cardLayout.show(cardsPanel, "SIGN_IN");
+    }
+
+    /**
+     * Switch to settings panel.
+     */
+    public void switchToSettings(Profile profile) {
+        settingsPanel.loadProfile(profile);
+        cardLayout.show(cardsPanel, "SETTINGS");
+    }
+
+    /**
+     * Switch back to main menu after settings.
+     */
+    public void switchToMainMenuAfterSettings() {
+        // Reload profile to reflect any changes
+        Profile currentProfile = mainMenuPanel.getCurrentProfile();
+        if (currentProfile != null && currentProfile.getUserId() != null) {
+            Profile refreshedProfile = conversationEngine.loadProfile(currentProfile.getUserId());
+            if (refreshedProfile != null) {
+                mainMenuPanel.loadProfileDirectly(refreshedProfile);
+            }
+        }
         cardLayout.show(cardsPanel, "MAIN_MENU");
     }
 

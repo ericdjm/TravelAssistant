@@ -173,6 +173,9 @@ public class PlanningPanel extends JPanel {
                 // Get recommendations and render
                 List<RecommendationCard> cards = conversationEngine.getCurrentRecommendations();
                 renderCards(cards);
+
+                // Save session after planning completes
+                conversationEngine.saveCurrentSession();
             }
         };
         worker.execute();
