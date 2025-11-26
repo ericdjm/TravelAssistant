@@ -109,7 +109,7 @@ public class ProfileContextStore {
             profiles.put(p.getUserId(), p);
 
         } catch (SQLException e) {
-            System.err.println("❌ Error saving profile: " + e.getMessage());
+            System.err.println("❌ Error saving profile to database: " + e.getMessage());
             throw new RuntimeException("Failed to save profile", e);
         }
     }
@@ -171,8 +171,8 @@ public class ProfileContextStore {
             }
 
         } catch (SQLException e) {
-            System.err.println("❌ Error loading profile: " + e.getMessage());
-            return null;
+            System.err.println("❌ Error loading profile from database: " + e.getMessage());
+            throw new RuntimeException("Failed to load profile", e);
         }
     }
 
@@ -216,7 +216,7 @@ public class ProfileContextStore {
             sessions.put(s.getSessionId(), s);
 
         } catch (SQLException e) {
-            System.err.println("❌ Error saving session: " + e.getMessage());
+            System.err.println("❌ Error saving session to database: " + e.getMessage());
             throw new RuntimeException("Failed to save session", e);
         }
     }
@@ -280,8 +280,8 @@ public class ProfileContextStore {
             }
 
         } catch (SQLException e) {
-            System.err.println("❌ Error loading session: " + e.getMessage());
-            return null;
+            System.err.println("❌ Error loading session from database: " + e.getMessage());
+            throw new RuntimeException("Failed to load session", e);
         }
     }
 

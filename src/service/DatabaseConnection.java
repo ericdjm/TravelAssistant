@@ -40,8 +40,8 @@ public class DatabaseConnection {
             System.out.println("✓ MySQL JDBC Driver loaded successfully");
         } catch (ClassNotFoundException e) {
             System.err.println("❌ ERROR: MySQL JDBC Driver not found!");
-            System.err.println("Make sure mysql-connector-j-9.5.0.jar is in your classpath");
-            throw new RuntimeException("Failed to load MySQL JDBC Driver", e);
+            System.err.println("Please add mysql-connector-j jar to classpath");
+            throw new RuntimeException("MySQL JDBC Driver not found", e);
         }
     }
 

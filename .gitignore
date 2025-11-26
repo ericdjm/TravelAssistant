@@ -1,4 +1,27 @@
 # .gitignore for TravelAssistant
+
+# ============================
+# JAVA COMPILED FILES
+# ============================
+*.class
+*.jar
+!lib/*.jar
+!junit-platform-console-standalone-*.jar
+*.war
+*.ear
+*.log
+
+# Package Files
+*.nar
+
+# Java compilation output directories
+out/
+target/
+bin/
+
+# ============================
+# PYTHON (if any)
+# ============================
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
