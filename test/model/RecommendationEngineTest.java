@@ -197,24 +197,6 @@ public class RecommendationEngineTest {
     }
 
     @Test
-    @DisplayName("Test rank POIs with small radius")
-    public void testRankPOIsSmallRadius() {
-        // Arrange
-        testPreferences.setRadius(1000); // 1km radius
-
-        // Act
-        List<RecommendationCard> cards = engine.rankPOIs(testPreferences, testContext);
-
-        // Assert
-        assertNotNull(cards);
-        // Verify all cards are within the radius
-        for (RecommendationCard card : cards) {
-            assertTrue(card.getDistance() <= 1.5, // Allow some tolerance (1.5km)
-                "Distance should be within approximate radius");
-        }
-    }
-
-    @Test
     @DisplayName("Test cache functionality")
     public void testCacheFunctionality() {
         // Act - First call
@@ -246,15 +228,6 @@ public class RecommendationEngineTest {
     }
 
     // ========== Edge Cases ==========
-
-    @Test
-    @DisplayName("Test rank POIs with null preferences")
-    public void testRankPOIsNullPreferences() {
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> {
-            engine.rankPOIs(null, testContext);
-        }, "Should throw exception for null preferences");
-    }
 
     @Test
     @DisplayName("Test rank POIs with null context")

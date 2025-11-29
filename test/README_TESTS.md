@@ -60,58 +60,120 @@ javac -d . src/controller/*.java
 
 ```bash
 # Compile all test files
-javac -cp ".:junit-platform-console-standalone-1.10.1.jar" \
-  test/domain/*.java \
-  test/service/*.java \
-  test/model/*.java \
-  test/controller/*.java \
-  test/TestRunner.java
+javac -cp "bin:junit-platform-console-standalone-1.10.1.jar" \
+      -d bin \                                            
+      test/domain/*.java \
+      test/service/*.java \ 
+      test/model/*.java \
+      test/controller/*.java \
+      test/TestRunner.java
 ```
 
 ## Running Tests
 
-### Option 1: Run All Tests Using JUnit Console Launcher
+### Run All Tests
 
 ```bash
 java -jar junit-platform-console-standalone-1.10.1.jar \
-  --class-path . \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
   --scan-class-path \
-  --details tree
+  --include-package test
 ```
 
-### Option 2: Run All Tests Using TestRunner
+---
+
+### Run Tests by Folder/Package
+
+Run all tests in a specific package (folder):
 
 ```bash
-java -cp ".:junit-platform-console-standalone-1.10.1.jar" test.TestRunner
-```
-
-### Option 3: Run Specific Test Class
-
-```bash
-# Run only ProfileContextStoreTest
+# Run all tests in test/model/ folder
 java -jar junit-platform-console-standalone-1.10.1.jar \
-  --class-path . \
-  --select-class test.model.ProfileContextStoreTest
-
-# Run only ConversationEngineTest
-java -jar junit-platform-console-standalone-1.10.1.jar \
-  --class-path . \
-  --select-class test.controller.ConversationEngineTest
-```
-
-### Option 4: Run Tests by Package
-
-```bash
-# Run all model tests
-java -jar junit-platform-console-standalone-1.10.1.jar \
-  --class-path . \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
   --select-package test.model
 
-# Run all service tests
+# Run all tests in test/service/ folder
 java -jar junit-platform-console-standalone-1.10.1.jar \
-  --class-path . \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
   --select-package test.service
+
+# Run all tests in test/controller/ folder
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-package test.controller
+
+# Run all tests in test/domain/ folder
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-package test.domain
 ```
+
+---
+
+### Run a Single Test Class
+
+Run all tests in one specific test file:
+
+```bash
+# Run only ProfileContextStoreTest (11 tests)
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-class test.model.ProfileContextStoreTest
+
+# Run only RecommendationEngineTest (14 tests)
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-class test.model.RecommendationEngineTest
+
+# Run only ConversationEngineTest (14 tests)
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-class test.controller.ConversationEngineTest
+
+# Run only IntegrationLayerTest (19 tests)
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-class test.service.IntegrationLayerTest
+
+# Run only PreferencesTest (21 tests)
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-class test.domain.PreferencesTest
+```
+
+---
+
+### Run a Single Test Method
+
+Run one specific test method from a class:
+
+```bash
+# Example: Run only "testSaveAndLoadProfile" from ProfileContextStoreTest
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-method "test.model.ProfileContextStoreTest#testSaveAndLoadProfile"
+
+# Example: Run only "testRankPOIsValid" from RecommendationEngineTest
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-method "test.model.RecommendationEngineTest#testRankPOIsValid"
+
+# Example: Run only "testStartPlanningValid" from ConversationEngineTest
+java -jar junit-platform-console-standalone-1.10.1.jar \
+  --class-path "bin:lib/mysql-connector-j-9.5.0.jar" \
+  --select-method "test.controller.ConversationEngineTest#testStartPlanningValid"
+```
+
+---
+
+### Quick Reference Table
+
+| What to Run | Flag to Use | Example |
+|-------------|-------------|---------|
+| All tests | `--scan-class-path --include-package test` | Run entire test suite |
+| One folder | `--select-package test.model` | All tests in `test/model/` |
+| One class | `--select-class test.model.ItineraryTest` | All tests in `ItineraryTest.java` |
+| One method | `--select-method "test.model.ItineraryTest#testCreateItinerary"` | Single test method |
 
 ## Test Coverage
 
@@ -195,7 +257,7 @@ When running tests successfully, you should see output like:
 └─ JUnit Vintage ✔
 
 Test run finished after XXX ms
-[     118 tests successful      ]
+[     106 tests successful      ]
 [       0 tests failed          ]
 ```
 
@@ -223,88 +285,3 @@ java -jar junit-platform-console-standalone-1.10.1.jar \
   --class-path . \
   --scan-class-path
 ```
-
-## Build Script (Optional)
-
-Create a `compile_tests.sh` script:
-
-```bash
-#!/bin/bash
-
-echo "Compiling TravelAssistant Test Suite..."
-
-# Compile source code
-echo "Step 1: Compiling source code..."
-javac -d . src/domain/*.java
-javac -d . src/service/*.java
-javac -d . src/model/*.java
-javac -d . src/controller/*.java
-
-# Compile tests
-echo "Step 2: Compiling tests..."
-javac -cp ".:junit-platform-console-standalone-1.10.1.jar" \
-  test/domain/*.java \
-  test/service/*.java \
-  test/model/*.java \
-  test/controller/*.java \
-  test/TestRunner.java
-
-echo "Compilation complete!"
-echo ""
-echo "Run tests with:"
-echo "  java -jar junit-platform-console-standalone-1.10.1.jar --class-path . --scan-class-path"
-```
-
-Make it executable:
-```bash
-chmod +x compile_tests.sh
-./compile_tests.sh
-```
-
-## Test Execution Script (Optional)
-
-Create a `run_tests.sh` script:
-
-```bash
-#!/bin/bash
-
-echo "Running TravelAssistant Test Suite..."
-echo ""
-
-java -jar junit-platform-console-standalone-1.10.1.jar \
-  --class-path . \
-  --scan-class-path \
-  --details tree
-
-echo ""
-echo "Test execution complete!"
-```
-
-Make it executable:
-```bash
-chmod +x run_tests.sh
-./run_tests.sh
-```
-
-## Notes
-
-1. **Database Tests**: ProfileContextStoreTest may require MySQL database connection. Ensure database is configured in `DatabaseConnection.java`
-
-2. **Mock Data**: Some tests use mock/stub data from services like `PlacesService`, `TransitService`, and `WeatherService`
-
-3. **Test Independence**: All tests are independent and can run in any order
-
-4. **Cleanup**: Tests use `@BeforeEach` and `@AfterEach` for setup and cleanup
-
-## Contributing
-
-When adding new tests:
-1. Follow the existing naming convention: `<ClassName>Test.java`
-2. Use `@DisplayName` for descriptive test names
-3. Group related tests with comments
-4. Include edge cases and error conditions
-5. Ensure tests are independent and repeatable
-
-## License
-
-See main project LICENSE file.

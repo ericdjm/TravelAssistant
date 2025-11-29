@@ -4,43 +4,43 @@
 
 ---
 
-## ✅ What's Implemented
+## Prerequisites
 
-### Mock Services (Phase 3)
-- **MockPlacesService** - 15 sample Toronto POIs (restaurants, museums, parks, cafes, etc.)
-- **MockTransitService** - Fake ETA calculations based on distance and transport mode
-- **MockWeatherService** - Hardcoded pleasant weather
+### 1. Download MySQL and Create Tables
 
-### Business Logic (Phase 3)
-- **RecommendationEngine** - Complete implementation:
-  - `fetchCandidates()` - Get POIs from integration layer
-  - `rankPOIs()` - Rank by rating (40%), distance (40%), budget (20%)
-  - `buildMicroItinerary()` - Generate itinerary for selected card
+Before running the application, you must set up the MySQL database.
 
-- **ConversationEngine** (Controller) - Complete implementation:
-  - `startPlanning()` - Main entry point (UC-1)
-  - `adjustPreferences()` - Update and re-rank (UC-2)
-  - `handleSelectCard()` - Show itinerary for selected card
-  - `handleShowMore()` - Pagination support
+**Follow the instructions in [mysql.md](mysql.md)** to:
+- Install MySQL via Homebrew
+- Start the MySQL service
+- Create the `travel_assistant_db` database
+- Run `schema.sql` and `schema_pois.sql` to create tables and insert sample data
 
-### User Interface (Phase 3)
-- **MobileAppUI** - Full Java Swing implementation:
-  - Preference input fields (interests, budget, radius, transport)
-  - "Start Planning" button
-  - Scrollable recommendation cards with ratings and distance
-  - "View Itinerary" button on each card
-  - Itinerary dialog showing steps and ETA
+**Quick Setup Commands:**
+```bash
+# Install and start MySQL
+brew install mysql
+brew services start mysql
 
-### Integration
-- **IntegrationLayer** - Delegates to mock services
-- **ProfileContextStore** - MySQL persistence (already implemented)
-- **Main** - Wires all components together
+# Create database and tables
+mysql -u root -e "CREATE DATABASE travel_assistant_db;"
+mysql -u root travel_assistant_db < docs/schema.sql
+mysql -u root travel_assistant_db < docs/schema_pois.sql
+```
+
+### 2. Verify MySQL is Running
+
+```bash
+brew services list | grep mysql
+```
+
+You should see `mysql started` in the output.
 
 ---
 
-## 🚀 How to Run
+## How to Run
 
-### Method 1: Quick Run (Recommended)
+### Method 1: Quick Run (if code compiled)
 
 ```bash
 cd ~/Documents/GitHub/TravelAssistant
@@ -57,7 +57,8 @@ If you made changes:
 cd ~/Documents/GitHub/TravelAssistant
 
 # Compile everything
-javac -cp "lib/mysql-connector-j-9.5.0.jar:src" -d bin \
+javac -cp "lib/mysql-connector-j-9.5.0.jar:src" \
+  -d bin \
   src/domain/*.java \
   src/service/*.java \
   src/model/*.java \
@@ -278,4 +279,3 @@ java -cp "lib/mysql-connector-j-9.5.0.jar:bin" Main
 ---
 
 **Last Updated**: November 25, 2024
-**Phase 3 Complete** ✅

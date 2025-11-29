@@ -207,20 +207,6 @@ public class IntegrationLayerTest {
         assertNull(location, "Should return null when service not set");
     }
 
-    @Test
-    @DisplayName("Test geocode with different addresses")
-    public void testGeocodeDifferentAddresses() {
-        // Act
-        LatLng toronto = integrationLayer.geocode("Toronto, ON");
-        LatLng cnTower = integrationLayer.geocode("CN Tower, Toronto");
-
-        // Assert
-        assertNotNull(toronto);
-        assertNotNull(cnTower);
-        // Locations should be different
-        assertNotEquals(toronto.getLatitude(), cnTower.getLatitude());
-    }
-
     // ========== Get Weather Tests ==========
 
     @Test

@@ -4,43 +4,190 @@
 
 ---
 
+## 🚀 First-Time Setup (New Users Start Here!)
+
+If this is your first time setting up the project, follow the instructions for your operating system.
+
+---
+
+### 🍎 macOS Setup
+
+#### Step 1: Install MySQL via Homebrew
+
+```bash
+# Install Homebrew if you don't have it
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install MySQL
+brew install mysql
+```
+
+#### Step 2: Start MySQL Service
+
+```bash
+# Start MySQL as a background service (auto-starts on boot)
+brew services start mysql
+```
+
+#### Step 3: Create the Database
+
+```bash
+# Connect to MySQL and create the database
+mysql -u root -e "CREATE DATABASE travel_assistant_db;"
+```
+
+#### Step 4: Create Tables (Run Schema Files)
+
+```bash
+# Navigate to project directory
+cd ~/Documents/GitHub/TravelAssistant
+
+# Run the main schema (creates profiles, sessions, conversation_history, events tables)
+mysql -u root travel_assistant_db < docs/schema.sql
+
+# Run the POIs schema (creates pois table with 47 sample Toronto POIs)
+mysql -u root travel_assistant_db < docs/schema_pois.sql
+```
+
+#### Step 5: Verify Setup
+
+```bash
+# Check that all tables were created
+mysql -u root -e "USE travel_assistant_db; SHOW TABLES;"
+
+# Verify POIs were inserted (should show 47)
+mysql -u root -e "SELECT COUNT(*) as total_pois FROM travel_assistant_db.pois;"
+```
+
+---
+
+### 🪟 Windows Setup
+
+#### Step 1: Download and Install MySQL
+
+1. Go to: https://dev.mysql.com/downloads/installer/
+2. Download **MySQL Installer for Windows** (mysql-installer-community)
+3. Run the installer and choose **"Developer Default"** or **"Server only"**
+4. During setup:
+   - Set root password (or leave blank for local dev)
+   - Keep default port: `3306`
+   - Select **"Start MySQL Server at System Startup"**
+5. Complete the installation
+
+#### Step 2: Add MySQL to PATH (if not done automatically)
+
+1. Find MySQL installation path (usually `C:\Program Files\MySQL\MySQL Server 8.0\bin`)
+2. Add to System PATH:
+   - Open **System Properties** → **Environment Variables**
+   - Under **System Variables**, find `Path` and click **Edit**
+   - Add: `C:\Program Files\MySQL\MySQL Server 8.0\bin`
+   - Click **OK** to save
+
+#### Step 3: Open Command Prompt and Create Database
+
+```cmd
+# Open Command Prompt (cmd) or PowerShell as Administrator
+
+# If you set a root password during installation:
+mysql -u root -p -e "CREATE DATABASE travel_assistant_db;"
+
+# If no password (local dev):
+mysql -u root -e "CREATE DATABASE travel_assistant_db;"
+```
+
+#### Step 4: Create Tables (Run Schema Files)
+
+```cmd
+# Navigate to project directory
+cd C:\Users\YourUsername\Documents\GitHub\TravelAssistant
+
+# Run the main schema (if you have a password, add -p flag)
+mysql -u root travel_assistant_db < docs\schema.sql
+
+# Run the POIs schema
+mysql -u root travel_assistant_db < docs\schema_pois.sql
+```
+
+**Alternative: Use MySQL Workbench**
+1. Open MySQL Workbench
+2. Connect to your local MySQL server
+3. Open `docs/schema.sql` and execute (lightning bolt icon)
+4. Open `docs/schema_pois.sql` and execute
+
+#### Step 5: Verify Setup
+
+```cmd
+mysql -u root -e "USE travel_assistant_db; SHOW TABLES;"
+
+# Verify POIs were inserted (should show 47)
+mysql -u root -e "SELECT COUNT(*) as total_pois FROM travel_assistant_db.pois;"
+```
+
+---
+
+### ✅ Expected Output (Both Platforms)
+
+After running the schema files, you should see 5 tables:
+
+```
++--------------------------------+
+| Tables_in_travel_assistant_db  |
++--------------------------------+
+| conversation_history           |
+| events                         |
+| pois                           |
+| profiles                       |
+| sessions                       |
++--------------------------------+
+```
+
+And 47 POIs in the database.
+
+---
+
 ## ✅ One-Time Setup (Already Done!)
 
-You've already completed these steps:
-- ✅ Installed MySQL via Homebrew
+If you've already completed the steps above:
+- ✅ Installed MySQL (Homebrew on macOS / Installer on Windows)
 - ✅ Started MySQL as a background service
 - ✅ Created database: `travel_assistant_db`
+- ✅ Created tables via schema.sql and schema_pois.sql
 
 ---
 
 ## 🚀 Do I Need to Start MySQL Every Time?
 
-**NO!** You already ran:
-```bash
-brew services start mysql
-```
-
-This made MySQL run as a **background service** that:
-- ✅ Starts automatically when your Mac boots
+**NO!** MySQL runs as a **background service** that:
+- ✅ Starts automatically when your computer boots
 - ✅ Runs in the background always
 - ✅ No need to start it again in new terminal windows
 
-**Translation**: MySQL is now always running on your Mac. You're good to go! 🎉
+**Translation**: MySQL is now always running. You're good to go!
 
 ---
 
 ## 🔍 Check if MySQL is Running
 
+### macOS
 ```bash
 brew services list | grep mysql
 ```
 
 **Expected output:**
 ```
-mysql    started    husseinsaab    ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+mysql    started    username    ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
 ```
 
-If it says `started` → ✅ MySQL is running!
+### Windows (Command Prompt as Admin)
+```cmd
+sc query mysql
+```
+
+Or check in **Services**:
+1. Press `Win + R`, type `services.msc`, press Enter
+2. Look for **MySQL** or **MySQL80** - Status should be **Running**
+
+If it says `started` or `Running` → ✅ MySQL is running!
 
 ---
 
@@ -92,25 +239,39 @@ mysql -u root -e "USE travel_assistant_db; DESCRIBE profiles;"
 
 ### Start/Stop/Restart MySQL Service
 
-**Stop MySQL** (if you need to):
+#### macOS (using Homebrew)
+
 ```bash
+# Stop MySQL
 brew services stop mysql
-```
 
-**Start MySQL**:
-```bash
+# Start MySQL
 brew services start mysql
-```
 
-**Restart MySQL** (if something goes wrong):
-```bash
+# Restart MySQL
 brew services restart mysql
-```
 
-**Check status**:
-```bash
+# Check status
 brew services list
 ```
+
+#### Windows (Command Prompt as Administrator)
+
+```cmd
+# Stop MySQL
+net stop mysql
+
+# Start MySQL
+net start mysql
+
+# Restart MySQL
+net stop mysql && net start mysql
+```
+
+Or use **Services** GUI:
+1. Press `Win + R`, type `services.msc`, press Enter
+2. Find **MySQL** or **MySQL80**
+3. Right-click → Start / Stop / Restart
 
 ---
 
